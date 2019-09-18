@@ -48,8 +48,12 @@ const tweetController = {
           return res.json({ status: 'error', message: "you are not authorized to do this action" })
         }
 
-        tweet.update(req.body)
-        return res.json({ status: 'success', message: "category was successfully  updated" })
+        try {
+          await tweet.update(req.body)
+          return res.json({ status: 'success', message: "category was successfully  updated" })
+        } catch (error) {
+          return res.json({ status: 'error', message: error })
+        }
       }
 
     } catch (error) {
@@ -71,8 +75,13 @@ const tweetController = {
         return res.json({ status: 'error', message: "you are not authorized to do this action" })
       }
 
-      tweet.destroy()
-      return res.json({ status: 'success', message: "tweet was successfully destoryed" })
+      try {
+        await tweet.destroy()
+        return res.json({ status: 'success', message: "tweet was successfully destoryed" })
+      } catch (error) {
+        return res.json({ status: 'error', message: error })
+      }
+
     } catch (error) {
       return res.json({ status: 'error', message: error })
     }
