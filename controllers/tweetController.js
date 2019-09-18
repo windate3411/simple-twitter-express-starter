@@ -1,6 +1,8 @@
 const db = require('../models')
 const Tweet = db.Tweet
-
+const User = db.User
+const Reply = db.Reply
+const Like = db.Like
 
 const tweetController = {
   //瀏覽所有推播
@@ -84,6 +86,46 @@ const tweetController = {
         return res.status(500).json({ status: 'error', message: error })
       }
 
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  // 取得 tweet 的 replies
+  getReplies: async (req, res) => {
+    try {
+      // 取得 tweet 和 replies
+      let tweet = await Tweet.findByPk(req.params.tweet_id, {
+        include: [ 
+          Reply, 
+          {model: User, include: [
+            Tweet,
+            Like,
+            {model: User, as: 'Followers'},
+            {model: User, as: 'Followings'}
+          ]}
+        ]
+      })
+      // 如果 tweet 不存在
+      if (!tweet) {
+        return res.status(400).json({status: 'error', message: 'tweet was not found.'})
+      }
+      return res.status(200).json(tweet)
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  postReplies: async (req, res) => {
+    try {
+      if (!req.body.comment) {
+        return res.status(400).json({status: 'error', message: 'comment can not be empty.'})
+      } else {
+        await Reply.create({
+          comment: req.body.comment,
+          TweetId: req.body.TweetId,
+          UserId: req.user.id
+        })
+        return res.status(201).json({status: 'success', message: 'new tweet has been successfully created.'})
+      }
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }

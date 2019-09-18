@@ -9,6 +9,10 @@ router.get('/', tweetController.getTweets)
 // 新增一則推播
 router.post('/', tweetController.postTweet)
 
+// replies
+router.get('/:tweet_id/replies', tweetController.getReplies)
+router.post('/:tweet_id/replies', tweetController.postReplies)
+
 // 編輯一則推播
 router.put('/:tweet_id', tweetController.putTweet)
 
