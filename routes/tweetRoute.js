@@ -10,10 +10,10 @@ router.get('/', tweetController.getTweets)
 router.post('/', tweetController.postTweet)
 
 // 編輯一則推播
-router.put('/:id', tweetController.putTweet)
+router.put('/:tweet_id', tweetController.putTweet)
 
 
 //刪除一則推播
-router.delete('/:id', tweetController.deleteTweet)
+router.delete('/:tweet_id', tweetController.deleteTweet)
 
 module.exports = router
