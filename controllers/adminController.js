@@ -9,11 +9,11 @@ const adminController = {
       let tweets = await Tweet.findAll()
       // 確認是否是 admin
       if(req.user.role === 'Admin') {
-        return res.json(tweets)
+        return res.status(200).json({ status: 'success', tweets })
       }
-      return res.json({stauts: 'error', message: 'you are not a admin.'})
+      return res.status(401).json({stauts: 'error', message: 'you are not a admin.'})
     } catch (error) {
-      return res.json({stauts: 'error', message: error})
+      return res.status(500).json({stauts: 'error', message: error})
     }
   },
   // 刪除其他使用者的推文
@@ -21,15 +21,15 @@ const adminController = {
     try {
       let tweet = await Tweet.findByPk(req.params.id)
       if (!tweet) {
-        return res.json({stauts: 'error', message: 'tweet was not found.'})
+        return res.status(400).json({stauts: 'error', message: 'tweet was not found.'})
       }
       if (req.user.role !== 'Admin') {
-        return res.json({stauts: 'error', message: 'you are not authorized to do this action.'})
+        return res.status(401).json({stauts: 'error', message: 'you are not authorized to do this action.'})
       }
       await tweet.destroy()
-      return res.json({status: 'success', message: 'tweet was successfully destoryed.'})
+      return res.status(202).json({status: 'success', message: 'tweet was successfully destoryed.'})
     } catch (error) {
-      return res.json({stauts: 'error', message: error})
+      return res.status(500).json({stauts: 'error', message: error})
     }
   },
   // 看見站內所有的使用者
@@ -38,11 +38,11 @@ const adminController = {
       let users = await User.findAll()
       // 確認是否是 admin
       if (req.user.role !== 'Admin') {
-        return res.json({stauts: 'error', message: 'you are not a admin.'})
+        return res.status(401).json({stauts: 'error', message: 'you are not a admin.'})
       }
-      return res.json(users)
+      return res.status(200).json({ status: 'success', users })
     } catch (error) {
-      return res.json({stauts: 'error', message: error})
+      return res.status(500).json({stauts: 'error', message: error})
     }
   }
 }
