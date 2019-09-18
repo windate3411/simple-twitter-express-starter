@@ -1,7 +1,7 @@
 const express = require('express')
-const helpers = require('./_helpers');
 const bodyParser = require('body-parser')
 if (process.env.NODE_ENV !== 'production') { require('dotenv').config() }
+const helpers = require('./_helpers');
 const passport = require('./config/passport')
 
 const app = express()
