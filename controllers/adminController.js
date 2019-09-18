@@ -13,7 +13,7 @@ const adminController = {
       }
       return res.json({stauts: 'error', message: 'you are not a admin.'})
     } catch (error) {
-      console.log(error)
+      return res.json({stauts: 'error', message: error})
     }
   },
   // 刪除其他使用者的推文
@@ -29,7 +29,7 @@ const adminController = {
       await tweet.destroy()
       return res.json({status: 'success', message: 'tweet was successfully destoryed.'})
     } catch (error) {
-      console.log(error)
+      return res.json({stauts: 'error', message: error})
     }
   },
   // 看見站內所有的使用者
@@ -42,7 +42,7 @@ const adminController = {
       }
       return res.json(users)
     } catch (error) {
-      console.log(error)
+      return res.json({stauts: 'error', message: error})
     }
   }
 }
