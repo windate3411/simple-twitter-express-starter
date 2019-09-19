@@ -104,6 +104,12 @@ $ npm run dev
 ```
 You may visit the application on browser with the URL: http://localhost:3000
 
+**9. Run test for the project**
+
+```
+$ npm run test
+```
+
 ___
 
 
