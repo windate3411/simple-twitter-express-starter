@@ -61,6 +61,15 @@ module.exports = {
   },
   getLikes: async (req, res) => {
     try {
+      if (process.env.heroku) {
+        queryLike = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."TweetId" = "Tweet"."id")'
+        queryReply = '(SELECT COUNT(*) FROM "Replies" WHERE "Replies"."TweetId" = "Tweet"."id")'
+      } else {
+        queryLike = '(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'
+        queryReply = '(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'
+      }
+
+
       let likes = await Like.findAll({
         where: {
           UserId: req.params.userId
@@ -69,12 +78,11 @@ module.exports = {
           {
             model: Tweet,
             include: [
-              User,
-              Reply
+              User
             ],
             attributes: [
-              [Sequelize.literal('(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'), 'LikesCount'],
-              [Sequelize.literal('(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'), 'RepliesCount']
+              [Sequelize.literal(queryLike), 'LikesCount'],
+              [Sequelize.literal(queryReply), 'RepliesCount']
             ]
           }
         ]
