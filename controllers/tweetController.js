@@ -98,16 +98,22 @@ const tweetController = {
       let queryLikes = ''
       let queryFollower = ''
       let queryFollowing = ''
+      let queryLikeCount = ''
+      let queryReplyCount = ''
       if (process.env.heroku) {
         queryTweets = '(SELECT COUNT(*) FROM "Tweets" WHERE "Tweets"."UserId" = "User"."id")'
         queryLikes = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."UserId" = "User"."id")'
         queryFollower = '(SELECT COUNT(*) FROM "Followships" WHERE "Followships"."followerId" = "User"."id")'
         queryFollowing = '(SELECT COUNT(*) FROM "Followships" WHERE "Followships"."followingId" = "User"."id")'
+        queryLikeCount = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."TweetId" = "Tweet"."id")'
+        queryReplyCount = '(SELECT COUNT(*) FROM "Replies" WHERE "Replies"."TweetId" = "Tweet"."id")'
       } else {
         queryTweets = '(SELECT COUNT(*) FROM Tweets WHERE Tweets.UserId = User.id)'
         queryLikes = '(SELECT COUNT(*) FROM Likes WHERE Likes.UserId = User.id)'
         queryFollower = '(SELECT COUNT(*) FROM Followships WHERE Followships.followerId = User.id)'
         queryFollowing = '(SELECT COUNT(*) FROM Followships WHERE Followships.followingId = User.id)'
+        queryLikeCount = '(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'
+        queryReplyCount = '(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'
       }
       // 取得 tweet 和 replies
       let tweet = await Tweet.findByPk(req.params.tweet_id, {
@@ -131,8 +137,8 @@ const tweetController = {
         ],
         attributes:[
           'description',
-          [ Sequelize.literal('(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'), 'LikeTweetCount'],
-          [ Sequelize.literal('(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'), 'ReplyCount'],
+          [ Sequelize.literal(queryLikeCount), 'LikeTweetCount'],
+          [ Sequelize.literal(queryReplyCount), 'ReplyCount'],
         ]
       })
       // 如果 tweet 不存在
