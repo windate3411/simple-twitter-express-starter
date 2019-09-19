@@ -70,16 +70,15 @@ module.exports = {
             model: Tweet,
             include: [
               User,
-              Reply,
-              Like
+              Reply
+            ],
+            attributes: [
+              [Sequelize.literal('(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'), 'LikesCount'],
+              [Sequelize.literal('(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'), 'RepliesCount']
             ]
           }
         ]
       })
-      likes = likes.map(like => ({
-        likeId: like.dataValues.id,
-        tweet: like.dataValues.Tweet
-      }))
       return res.json({ status: 'success', likes })
     } catch (error) {
       res.status(500).json({ status: 'error', message: error })
