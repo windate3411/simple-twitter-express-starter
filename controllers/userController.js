@@ -2,6 +2,10 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const db = require('../models')
 const User = db.User
+const Like = db.Like
+const Tweet = db.Tweet
+const Reply = db.Reply
+const Sequelize = require('sequelize')
 
 module.exports = {
   signUp: async (req, res) => {
@@ -54,5 +58,31 @@ module.exports = {
         id: user.id, name: user.name, email: user.email, role: user.role
       }
     })
+  },
+  getLikes: async (req, res) => {
+    try {
+      let likes = await Like.findAll({
+        where: {
+          UserId: req.params.userId
+        },
+        include: [
+          {
+            model: Tweet,
+            include: [
+              User,
+              Reply,
+              Like
+            ]
+          }
+        ]
+      })
+      likes = likes.map(like => ({
+        likeId: like.dataValues.id,
+        tweet: like.dataValues.Tweet
+      }))
+      return res.json({ status: 'success', likes })
+    } catch (error) {
+      res.status(500).json({ status: 'error', message: error })
+    }
   }
 }
