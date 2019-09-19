@@ -87,9 +87,9 @@ module.exports = {
 
       return res.status(200).json({
         status: 'success',
+        user: { id: user.id, name: user.name, introduction: user.introduction, avatar: user.avatar },
         message: 'Successfully get to edit profile page'
       })
-
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
@@ -126,7 +126,6 @@ module.exports = {
             })
             return res.status(200).json({
               status: 'success',
-              user: { id: user.id, name: user.name, introduction: user.introduction, avatar: user.avatar },
               message: 'Successfully update the profile page'
             })
           })
