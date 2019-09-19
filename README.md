@@ -104,7 +104,21 @@ $ npm run dev
 ```
 You may visit the application on browser with the URL: http://localhost:3000
 
-**9. Run test for the project**
+
+### Run Test
+
+**1. Modify scripts (Only for Widows users using console emulators like Cmder or bash)**
+
+> /package.json
+```
+"scripts": {
+  "start": "node app.js",
+  "dev": "nodemon app.js",
+  "test": "set \"NODE_ENV=test\" && mocha test/*/*.js --exit --recursive --timeout 5000"
+},
+```
+
+**2. Run test for the project**
 
 ```
 $ npm run test
