@@ -2,10 +2,12 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const db = require('../models')
 const User = db.User
-const Tweet = db.Tweet
-
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
+const Like = db.Like
+const Tweet = db.Tweet
+const Reply = db.Reply
+const Sequelize = require('sequelize')
 
 module.exports = {
   signUp: async (req, res) => {
@@ -142,6 +144,38 @@ module.exports = {
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
-  }
+  },
+  getLikes: async (req, res) => {
+    try {
+      if (process.env.heroku) {
+        queryLike = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."TweetId" = "Tweet"."id")'
+        queryReply = '(SELECT COUNT(*) FROM "Replies" WHERE "Replies"."TweetId" = "Tweet"."id")'
+      } else {
+        queryLike = '(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'
+        queryReply = '(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'
+      }
 
+
+      let likes = await Like.findAll({
+        where: {
+          UserId: req.params.userId
+        },
+        include: [
+          {
+            model: Tweet,
+            include: [
+              User
+            ],
+            attributes: [
+              [Sequelize.literal(queryLike), 'LikesCount'],
+              [Sequelize.literal(queryReply), 'RepliesCount']
+            ]
+          }
+        ]
+      })
+      return res.json({ status: 'success', likes })
+    } catch (error) {
+      res.status(500).json({ status: 'error', message: error })
+    }
+  }
 }
