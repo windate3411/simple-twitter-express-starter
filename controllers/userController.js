@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const db = require('../models')
 const User = db.User
+const Like = db.Like
 
 module.exports = {
   signUp: async (req, res) => {

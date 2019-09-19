@@ -1,5 +1,6 @@
 const db = require('../models')
 const Tweet = db.Tweet
+const Like = db.Like
 
 
 const tweetController = {
@@ -86,6 +87,48 @@ const tweetController = {
 
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  // like tweet
+  addLike: async (req, res) => {
+    try {
+      // check if it's a duplicate like
+      const likeRecord = await Like.findOne({
+        where: {
+          UserId: req.user.id,
+          TweetId: req.params.tweetId
+        }
+      })
+      if (likeRecord) return res.status(400).json({ status: 'error', message: 'Already liked this tweet' })
+
+      // add new like record
+      await Like.create({
+        UserId: req.user.id,
+        TweetId: req.params.tweetId
+      })
+      return res.status(201).json({ status: 'success', message: 'Successfully liked the tweet!' })
+    } catch (error) {
+      res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  // unlike tweet
+  removeLike: async (req, res) => {
+    try {
+      const likeRecord = await Like.findOne({
+        where: {
+          UserId: req.user.id,
+          TweetId: req.params.tweetId
+        }
+      })
+
+      // check if like record exists
+      if (!likeRecord) return res.status(404).json({ status: 'error', message: 'Cannot find this like record' })
+
+      // destroy record
+      await likeRecord.destroy()
+      return res.status(200).json({ status: 'success', message: "Successfully unlike the tweet" })
+    } catch (error) {
+      res.status(500).json({ status: 'error', message: error })
     }
   }
 }
