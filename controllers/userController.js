@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const db = require('../models')
 const User = db.User
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const Like = db.Like
 const Tweet = db.Tweet
 const Reply = db.Reply
@@ -58,6 +60,90 @@ module.exports = {
         id: user.id, name: user.name, email: user.email, role: user.role
       }
     })
+  },
+  getUser: async (req, res) => {
+    try {
+      const user = await User.findByPk(req.params.id, { include: [Tweet] })
+      const tweets = user.Tweets
+      if (!user) {
+        return res.status(400).json({ status: 'error', message: 'cant find the user' })
+      }
+      return res.status(200).json({ status: 'success', user, tweets, message: 'Successfully get user profile' })
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  getUserPage: async (req, res) => {
+    try {
+      const user = await User.findByPk(req.params.id)
+
+      //if user not found
+      if (!user) {
+        return res.status(400).json({ status: 'error', message: 'cant find the user' })
+      }
+
+      //if not current user
+      if (req.user.id != user.id) {
+        return res.status(401).json({ status: 'error', message: "you are not authorized to do this action" })
+      }
+
+      return res.status(200).json({
+        status: 'success',
+        user: { id: user.id, name: user.name, introduction: user.introduction, avatar: user.avatar },
+        message: 'Successfully get to edit profile page'
+      })
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  editUserPage: async (req, res) => {
+    try {
+      const user = await User.findByPk(req.params.id)
+
+      //if user not found
+      if (!user) {
+        return res.status(400).json({ status: 'error', message: 'cant find the user' })
+      }
+
+      //if not current user
+      if (req.user.id != user.id) {
+        return res.status(401).json({ status: 'error', message: "you are not authorized to do this action" })
+      }
+
+      // check for empty field
+      if (!req.body.name) {
+        return res.status(400).json({ status: 'error', message: 'you must enter your name' })
+      }
+
+      try {
+        const { file } = req
+        //if a file is uploaded
+        if (file) {
+          imgur.setClientID(IMGUR_CLIENT_ID);
+          imgur.upload(file.path, async (err, img) => {
+            await user.update({
+              name: req.body.name,
+              introduction: req.body.introduction,
+              avatar: file ? img.data.link : user.avatar
+            })
+            return res.status(200).json({
+              status: 'success',
+              message: 'Successfully update the profile page'
+            })
+          })
+        } else {
+          await user.update(req.body)
+          return res.status(200).json({
+            status: 'success',
+            message: 'Successfully update the profile page'
+          })
+        }
+      } catch (error) {
+        return res.status(500).json({ status: 'error', message: error })
+      }
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
   },
   getLikes: async (req, res) => {
     try {
