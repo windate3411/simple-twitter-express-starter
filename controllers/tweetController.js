@@ -98,8 +98,8 @@ const tweetController = {
       let queryFollower = ''
       let queryFollowing = ''
       if (process.env.heroku) {
-        queryTweets = '(SELECT COUNT(*) FROM "Tweets" WHERE "Tweets".UserId" = "User"."id")'
-        queryLikes = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes".UserId" = "Use"r."id")'
+        queryTweets = '(SELECT COUNT(*) FROM "Tweets" WHERE "Tweets"."UserId" = "User"."id")'
+        queryLikes = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."UserId" = "User"."id")'
         queryFollower = '(SELECT COUNT(*) FROM "Followships" WHERE "Followships"."followerId" = "User"."id")'
         queryFollowing = '(SELECT COUNT(*) FROM "Followships" WHERE "Followships"."followingId" = "User"."id")'
       } else {
