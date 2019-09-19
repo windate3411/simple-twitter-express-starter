@@ -2,7 +2,12 @@ const helper = require('../_helpers')
 const passport = require('./passport')
 
 module.exports = {
-  ensureAuthenticated: helper.ensureAuthenticated(),
+  ensureAuthenticated: (req, res, next) => {
+    if (helper.ensureAuthenticated()) {
+      return next()
+    }
+    return passport.authenticate('jwt', { session: false })(req, res, next)
+  },
   getUser: (req, res, next) => {
     req.user = helper.getUser(req)
     next()
