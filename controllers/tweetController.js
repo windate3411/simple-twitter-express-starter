@@ -3,6 +3,7 @@ const Tweet = db.Tweet
 const Like = db.Like
 const User = db.User
 const sequelize = require('sequelize')
+const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
 const tweetController = {
   //瀏覽所有推播
@@ -25,7 +26,8 @@ const tweetController = {
           'name',
           'avatar',
           'introduction',
-          [sequelize.literal('(SELECT COUNT(*) FROM Followships WHERE Followships.followingId = User.id)'), 'FollowerCount']
+          [sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount']
+
         ],
         order: [[sequelize.literal('FollowerCount'), 'DESC']],
         limit: 10
