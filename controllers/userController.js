@@ -9,6 +9,8 @@ const Tweet = db.Tweet
 const Reply = db.Reply
 const Sequelize = require('sequelize')
 const Followship = db.Followship
+const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
+
 module.exports = {
   signUp: async (req, res) => {
     // check for empty input
@@ -61,7 +63,7 @@ module.exports = {
       }
     })
   },
-  getUser: async (req, res) => {
+  getUserTweets: async (req, res) => {
     try {
       const user = await User.findByPk(req.params.id, { include: [Tweet] })
       const tweets = user.Tweets
@@ -79,7 +81,7 @@ module.exports = {
       return res.status(500).json({ status: 'error', message: error })
     }
   },
-  getUserPage: async (req, res) => {
+  getEditUserPage: async (req, res) => {
     try {
       const user = await User.findByPk(req.params.id)
 
@@ -102,7 +104,7 @@ module.exports = {
       return res.status(500).json({ status: 'error', message: error })
     }
   },
-  editUserPage: async (req, res) => {
+  editUser: async (req, res) => {
     try {
       const user = await User.findByPk(req.params.id)
 
@@ -153,15 +155,6 @@ module.exports = {
   },
   getLikes: async (req, res) => {
     try {
-      if (process.env.heroku) {
-        queryLike = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."TweetId" = "Tweet"."id")'
-        queryReply = '(SELECT COUNT(*) FROM "Replies" WHERE "Replies"."TweetId" = "Tweet"."id")'
-      } else {
-        queryLike = '(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'
-        queryReply = '(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'
-      }
-
-
       let likes = await Like.findAll({
         where: {
           UserId: req.params.userId
@@ -170,11 +163,12 @@ module.exports = {
           {
             model: Tweet,
             include: [
-              User
+              { model: User, attributes: ['name', 'avatar'] }
             ],
             attributes: [
-              [Sequelize.literal(queryLike), 'LikesCount'],
-              [Sequelize.literal(queryReply), 'RepliesCount']
+              'createdAt',
+              [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
+              [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
             ]
           }
         ]
@@ -183,5 +177,14 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ status: 'error', message: error })
     }
+  },
+  getCurrentUser: (req, res) => {
+    return res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email,
+      avatar: req.user.avatar,
+      role: req.user.role
+    })
   }
 }

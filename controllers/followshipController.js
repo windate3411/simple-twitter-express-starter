@@ -20,8 +20,9 @@ module.exports = {
         followerId: req.user.id,
         followingId: req.body.userId
       })
-      return res.status(201).json({ status: 'success' })
+      return res.status(200).json({ status: 'success' })
     } catch (error) {
+      console.log(error)
       res.status(500).json({ status: 'error', message: error })
     }
   },
