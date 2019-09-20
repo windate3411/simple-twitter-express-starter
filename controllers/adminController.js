@@ -29,7 +29,7 @@ const adminController = {
         return res.status(401).json({ stauts: 'error', message: 'you are not authorized to do this action.' })
       }
       await tweet.destroy()
-      return res.status(202).json({ status: 'success', message: 'tweet was successfully destoryed.' })
+      return res.status(202).json({status: 'success', message: 'tweet was successfully destroyed.'})
     } catch (error) {
       return res.status(500).json({ stauts: 'error', message: error })
     }
