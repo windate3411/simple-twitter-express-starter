@@ -63,7 +63,7 @@ module.exports = {
       }
     })
   },
-  getUser: async (req, res) => {
+  getUserTweets: async (req, res) => {
     try {
       const user = await User.findByPk(req.params.id, { include: [Tweet] })
       const tweets = user.Tweets
@@ -75,7 +75,7 @@ module.exports = {
       return res.status(500).json({ status: 'error', message: error })
     }
   },
-  getUserPage: async (req, res) => {
+  getEditUserPage: async (req, res) => {
     try {
       const user = await User.findByPk(req.params.id)
 
@@ -98,7 +98,7 @@ module.exports = {
       return res.status(500).json({ status: 'error', message: error })
     }
   },
-  editUserPage: async (req, res) => {
+  editUser: async (req, res) => {
     try {
       const user = await User.findByPk(req.params.id)
 
