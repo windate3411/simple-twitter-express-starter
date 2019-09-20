@@ -217,6 +217,53 @@ module.exports = {
       return res.status(500).json({ status: 'error', message: error })
     }
   },
+  getFollowers: async (req, res) => {
+    try {
+      // 找 followings
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          {
+            model: User, as: 'Followers',
+            attributes: [
+              'id',
+              'name',
+              'avatar',
+              'introduction'
+            ],
+          }
+        ],
+        attributes: [
+          'id',
+          'name',
+          'avatar',
+          'introduction',
+          [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
+        ],
+        // 按照 following 時間排序
+        order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'ASC']]
+      })
+      let userFollowers = await user.Followers.map(r => ({
+        ...r.dataValues,
+        introduction: r.dataValues.introduction.substring(0, 50)
+      }))
+      user = await {
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        introduction: user.introduction.substring(0, 50),
+        TweetsCount: user.dataValues.TweetsCount,
+        FollowerCount: user.dataValues.FollowerCount,
+        FollowingCount: user.dataValues.FollowingCount,
+        LikeCount: user.dataValues.LikeCount
+      }
+      return res.status(200).json({ status: 'success', user, userFollowers, message: 'successfully get the information.' })
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
   getCurrentUser: (req, res) => {
     return res.json({
       id: req.user.id,

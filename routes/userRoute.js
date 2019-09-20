@@ -13,6 +13,7 @@ router.get('/:id/edit', ensureAuthenticated, getUser, userController.getEditUser
 router.post('/:id/edit', ensureAuthenticated, getUser, upload.single('avatar'), userController.editUser)
 router.get('/:id/likes', ensureAuthenticated, getUser, userController.getLikes)
 router.get('/:id/followings', userController.getFollowings)
+router.get('/:id/followers', userController.getFollowers)
 router.get('/current_user', ensureAuthenticated, getUser, userController.getCurrentUser)
 
 module.exports = router
