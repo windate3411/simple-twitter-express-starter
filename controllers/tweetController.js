@@ -1,7 +1,10 @@
 const db = require('../models')
-const Tweet = db.Tweet
+const User = db.User
+const Reply = db.Reply
 const Like = db.Like
-
+const Tweet = db.Tweet
+const Sequelize = require('sequelize')
+const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
 const tweetController = {
   //瀏覽所有推播
@@ -85,6 +88,63 @@ const tweetController = {
         return res.status(500).json({ status: 'error', message: error })
       }
 
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  // 取得 tweet 的 replies
+  getReplies: async (req, res) => {
+    try {
+      // 取得 tweet 和 replies
+      let tweet = await Tweet.findByPk(req.params.tweet_id, {
+        include: [
+          {
+            model: Reply,
+            include:[{model: User, attributes: ['name','avatar']}]
+          },
+          {
+            model: User,
+            attributes: [
+              'id',
+              'name',
+              'avatar',
+              'introduction',
+              [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+              [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
+              [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+              [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
+            ]
+          },
+        ],
+        attributes:[
+          'id',
+          'description',
+          [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
+          [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
+        ]
+      })
+      // 如果 tweet 不存在
+      if (!tweet) {
+        return res.status(400).json({ status: 'error', message: 'tweet was not found.' })
+      }
+      return res.status(200).json({ status: 'success', tweet, message: 'tweet was not found.' })
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  postReplies: async (req, res) => {
+    try {
+      if (!req.body.comment) {
+        return res.status(400).json({ status: 'error', message: 'comment can not be empty.' })
+      } else {
+        const tweet_id = req.params.tweet_id
+        await Reply.create({
+          comment: req.body.comment,
+          TweetId: tweet_id,
+          UserId: req.user.id
+        })
+        return res.status(201).json({ status: 'success', tweet_id, message: 'new reply has been successfully created.' })
+      }
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
