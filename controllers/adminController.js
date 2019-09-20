@@ -1,6 +1,7 @@
 const db = require('../models')
 const Tweet = db.Tweet
 const User = db.User
+const Like = db.Like
 const Sequelize = require('sequelize')
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
@@ -42,13 +43,13 @@ const adminController = {
         return res.status(401).json({ stauts: 'error', message: 'you are not a admin.' })
       }
       // get user data
-      const users = await User.findAll({
+      let users = await User.findAll({
         attributes: [
           'name', 'id', 'avatar', 'role',
           [Sequelize.literal(customQuery.Tweet.UserId), 'tweetCount'],
-          [Sequelize.literal(customQuery.Like.UserId), 'likeCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
-          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerId']
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerCount'],
+          [Sequelize.literal('(SELECT SUM((SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweets.id)) FROM Tweets WHERE Tweets.UserId = User.id )'), 'totalLikes']
         ],
         order: Sequelize.literal('tweetCount DESC')
       })
