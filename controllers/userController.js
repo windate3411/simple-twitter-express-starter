@@ -157,9 +157,10 @@ module.exports = {
           {
             model: Tweet,
             include: [
-              User
+              { model: User, attributes: ['name', 'avatar'] }
             ],
             attributes: [
+              'createdAt',
               [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
               [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
             ]
