@@ -7,6 +7,7 @@ const replyController ={
     try {
       //找到 reply
       let comment = await Reply.findByPk(req.params.reply_id)
+      const tweet_id = comment.TweetId
       // 確認是否是 reply 的發布者
       if (req.user.id !== comment.UserId) {
         return res.status(400).json({ status: 'error', message: 'you are not authorized to do this action.' })
@@ -16,7 +17,7 @@ const replyController ={
         return res.status(400).json({ status: 'error', message: 'comment can not be empty.' })
       }
       await comment.update({comment: req.body.comment})
-      return res.status(201).json({ status: 'success', message: 'reply has been successfully edited.' })
+      return res.status(201).json({ status: 'success', tweet_id, message: 'reply has been successfully edited.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
