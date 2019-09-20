@@ -20,4 +20,10 @@ router.put('/:tweet_id', tweetController.putTweet)
 //刪除一則推播
 router.delete('/:tweet_id', tweetController.deleteTweet)
 
+// Add new like
+router.post('/:tweetId/like', tweetController.addLike)
+
+// Remove like
+router.post('/:tweetId/unlike', tweetController.removeLike)
+
 module.exports = router

@@ -1,7 +1,7 @@
 const passport = require('./config/passport')
 
 function ensureAuthenticated() {
-  return passport.authenticate('jwt', { session: false })
+  return false;
 }
 
 function getUser(req) {
