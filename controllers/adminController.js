@@ -2,6 +2,7 @@ const db = require('../models')
 const Tweet = db.Tweet
 const User = db.User
 const Sequelize = require('sequelize')
+const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
 const adminController = {
   // 看見站內所有的推播 (設為後台首頁)
@@ -35,19 +36,6 @@ const adminController = {
   },
   // 看見站內所有的使用者
   getUsers: async (req, res) => {
-    // serve query based on current environment
-    if (process.env.heroku) {
-      queryTweet = '(SELECT COUNT(*) FROM "Tweets" WHERE "Tweets"."UserId" = "User"."id")'
-      queryLike = '(SELECT COUNT(*) FROM "Likes" WHERE "Likes"."UserId" = "User"."id")'
-      queryFollowing = '(SELECT COUNT(*) FROM "Followships" WHERE "Followships"."followerId" = "User"."id")'
-      queryFollower = '(SELECT COUNT(*) FROM "Followships" WHERE "Followships"."followingId" = "User"."id")'
-    } else {
-      queryTweet = '(SELECT COUNT(*) FROM Tweets WHERE Tweets.UserId = User.id)'
-      queryLike = '(SELECT COUNT(*) FROM Likes WHERE Likes.UserId = User.id)'
-      queryFollowing = '(SELECT COUNT(*) FROM Followships WHERE Followships.followerId = User.id)'
-      queryFollower = '(SELECT COUNT(*) FROM Followships WHERE Followships.followingId = User.id)'
-    }
-
     try {
       // 確認是否是 admin
       if (req.user.role !== 'Admin') {
@@ -57,15 +45,16 @@ const adminController = {
       const users = await User.findAll({
         attributes: [
           'name', 'id', 'avatar', 'role',
-          [Sequelize.literal(queryTweet), 'tweetCount'],
-          [Sequelize.literal(queryLike), 'likeCount'],
-          [Sequelize.literal(queryFollowing), 'FollowingCount'],
-          [Sequelize.literal(queryFollower), 'followerId']
+          [Sequelize.literal(customQuery.Tweet.UserId), 'tweetCount'],
+          [Sequelize.literal(customQuery.Like.UserId), 'likeCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerId']
         ],
         order: Sequelize.literal('tweetCount DESC')
       })
       return res.status(200).json({ status: 'success', users })
     } catch (error) {
+      console.log(error)
       return res.status(500).json({ stauts: 'error', message: error })
     }
   }
