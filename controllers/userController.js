@@ -6,7 +6,6 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const Like = db.Like
 const Tweet = db.Tweet
-const Reply = db.Reply
 const Sequelize = require('sequelize')
 const Followship = db.Followship
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
@@ -151,7 +150,7 @@ module.exports = {
     try {
       let likes = await Like.findAll({
         where: {
-          UserId: req.params.userId
+          UserId: req.params.id
         },
         include: [
           {
@@ -169,6 +168,53 @@ module.exports = {
       return res.json({ status: 'success', likes })
     } catch (error) {
       res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  getFollowings: async (req, res) => {
+    try {
+      // 找 followings
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          {
+            model: User, as: 'Followings',
+            attributes: [
+              'id',
+              'name',
+              'avatar',
+              'introduction'
+            ],
+          }
+        ],
+        attributes: [
+          'id',
+          'name',
+          'avatar',
+          'introduction',
+          [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
+        ],
+        // 按照 following 時間排序
+        order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'ASC']]
+      })
+      let userFollowings = await user.Followings.map(r => ({
+        ...r.dataValues,
+        introduction: r.dataValues.introduction.substring(0, 50)
+      }))
+      user = await {
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        introduction: user.introduction.substring(0, 50),
+        TweetsCount: user.dataValues.TweetsCount,
+        FollowerCount: user.dataValues.FollowerCount,
+        FollowingCount: user.dataValues.FollowingCount,
+        LikeCount: user.dataValues.LikeCount
+      }
+      return res.status(200).json({ status: 'success', user, userFollowings, message: 'successfully get the information.' })
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
     }
   },
   getCurrentUser: (req, res) => {
