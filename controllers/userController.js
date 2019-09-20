@@ -8,7 +8,7 @@ const Like = db.Like
 const Tweet = db.Tweet
 const Reply = db.Reply
 const Sequelize = require('sequelize')
-
+const Followship = db.Followship
 module.exports = {
   signUp: async (req, res) => {
     // check for empty input
@@ -65,10 +65,16 @@ module.exports = {
     try {
       const user = await User.findByPk(req.params.id, { include: [Tweet] })
       const tweets = user.Tweets
+      //get counts for user_profile
+      const tweetsCount = await user.countTweets()
+      const followersCount = await user.countFollowers()
+      const followingsCount = await user.countFollowings()
+      const likesCount = await user.countLikes()
+
       if (!user) {
         return res.status(400).json({ status: 'error', message: 'cant find the user' })
       }
-      return res.status(200).json({ status: 'success', user, tweets, message: 'Successfully get user profile' })
+      return res.status(200).json({ status: 'success', user, tweets, tweetsCount, followersCount, followingsCount, likesCount, message: 'Successfully get user profile' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
