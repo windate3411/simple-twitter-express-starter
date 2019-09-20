@@ -198,15 +198,15 @@ module.exports = {
         // 按照 following 時間排序
         order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'ASC']]
       })
-      let userFollowings = await user.Followings.map(r => ({
+      let userFollowings = user.Followings.map(r => ({
         ...r.dataValues,
         introduction: r.dataValues.introduction.substring(0, 50)
       }))
-      user = await {
+      user = {
         id: user.id,
         name: user.name,
         avatar: user.avatar,
-        introduction: user.introduction.substring(0, 50),
+        introduction: user.introduction,
         TweetsCount: user.dataValues.TweetsCount,
         FollowerCount: user.dataValues.FollowerCount,
         FollowingCount: user.dataValues.FollowingCount,
