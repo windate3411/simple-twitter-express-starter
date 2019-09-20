@@ -8,9 +8,27 @@ const adminController = {
   // 看見站內所有的推播 (設為後台首頁)
   getTweets: async (req, res) => {
     try {
-      let tweets = await Tweet.findAll()
+      let tweets = await Tweet.findAll({
+        include: [
+          {model: User, attributes: ['name', 'avatar']}
+        ],
+        attributes: [
+          "id",
+          "description",
+          "UserId",
+          "createdAt",
+          [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
+          [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
+        ],
+        order: Sequelize.literal('createdAt ASC')
+      })
       // 確認是否是 admin
       if (req.user.role === 'Admin') {
+        // 取 tweet 前 50 字
+        tweets = await tweets.map(tweet => ({
+          ...tweet.dataValues,
+          description: tweet.dataValues.description.substring(0, 50)
+        }))
         return res.status(200).json({ status: 'success', tweets })
       }
       return res.status(401).json({ stauts: 'error', message: 'you are not a admin.' })
