@@ -12,6 +12,5 @@ router.get('/:id/tweets', ensureAuthenticated, userController.getUser)
 router.get('/:id/edit', ensureAuthenticated, userController.getUserPage)
 router.post('/:id/edit', ensureAuthenticated, upload.single('avatar'), userController.editUserPage)
 router.get('/:userId/likes', userController.getLikes)
-router.get('/likes', ensureAuthenticated, userController.getLikeCount)
 
 module.exports = router
