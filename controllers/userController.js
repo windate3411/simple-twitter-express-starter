@@ -178,18 +178,13 @@ module.exports = {
           {
             model: User, as: 'Followings',
             attributes: [
-              'id',
-              'name',
-              'avatar',
-              'introduction'
+              'id', 'name', 'avatar',
+              [Sequelize.literal(customQuery.UserIntro.UserId), 'introduction']
             ],
           }
         ],
         attributes: [
-          'id',
-          'name',
-          'avatar',
-          'introduction',
+          'id', 'name', 'avatar', 'introduction',
           [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
@@ -198,21 +193,7 @@ module.exports = {
         // 按照 following 時間排序
         order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'ASC']]
       })
-      let userFollowings = user.Followings.map(r => ({
-        ...r.dataValues,
-        introduction: r.dataValues.introduction.substring(0, 50)
-      }))
-      user = {
-        id: user.id,
-        name: user.name,
-        avatar: user.avatar,
-        introduction: user.introduction,
-        TweetsCount: user.dataValues.TweetsCount,
-        FollowerCount: user.dataValues.FollowerCount,
-        FollowingCount: user.dataValues.FollowingCount,
-        LikeCount: user.dataValues.LikeCount
-      }
-      return res.status(200).json({ status: 'success', user, userFollowings, message: 'successfully get the information.' })
+      return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
@@ -225,18 +206,13 @@ module.exports = {
           {
             model: User, as: 'Followers',
             attributes: [
-              'id',
-              'name',
-              'avatar',
-              'introduction'
+              'id', 'name', 'avatar',
+              [Sequelize.literal(customQuery.UserIntro.UserId), 'introduction']
             ],
           }
         ],
         attributes: [
-          'id',
-          'name',
-          'avatar',
-          'introduction',
+          'id', 'name', 'avatar', 'introduction',
           [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
@@ -245,21 +221,7 @@ module.exports = {
         // 按照 following 時間排序
         order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'ASC']]
       })
-      let userFollowers = await user.Followers.map(r => ({
-        ...r.dataValues,
-        introduction: r.dataValues.introduction.substring(0, 50)
-      }))
-      user = {
-        id: user.id,
-        name: user.name,
-        avatar: user.avatar,
-        introduction: user.introduction,
-        TweetsCount: user.dataValues.TweetsCount,
-        FollowerCount: user.dataValues.FollowerCount,
-        FollowingCount: user.dataValues.FollowingCount,
-        LikeCount: user.dataValues.LikeCount
-      }
-      return res.status(200).json({ status: 'success', user, userFollowers, message: 'successfully get the information.' })
+      return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
