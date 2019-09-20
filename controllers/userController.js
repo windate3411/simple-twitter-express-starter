@@ -8,6 +8,7 @@ const Like = db.Like
 const Tweet = db.Tweet
 const Reply = db.Reply
 const Sequelize = require('sequelize')
+const Followship = db.Followship
 
 module.exports = {
   signUp: async (req, res) => {
