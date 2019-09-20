@@ -43,30 +43,12 @@ const adminController = {
       }
       // get user data
       const users = await User.findAll({
-        include: [
-          {
-            model: Tweet,
-            attributes: [
-              'id',
-              'description',
-              [Sequelize.literal('(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweets.id)'), 'countLike'],
-              // [Sequelize.literal('(SELECT SUM((SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweets.id)) FROM Tweets)'), 'totalLikes']
-            ],
-            // order: [[{ model: Tweet }, 'description', 'ASC']],
-            order: [{ model: Tweet }, 'id', 'asc']
-
-
-            // order: Sequelize.literal('id DESC'),
-            // limit: 3
-          }
-        ],
         attributes: [
           'name', 'id', 'avatar', 'role',
           [Sequelize.literal(customQuery.Tweet.UserId), 'tweetCount'],
-          // [Sequelize.literal(customQuery.Like.TweetId), 'likeCount'],
+          [Sequelize.literal(customQuery.Like.UserId), 'likeCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
-          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerId'],
-          [Sequelize.literal('(SELECT SUM((SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweets.id)) FROM Tweets WHERE Tweets.UserId = User.id )'), 'totalLikes']
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerId']
         ],
         order: Sequelize.literal('tweetCount DESC')
       })

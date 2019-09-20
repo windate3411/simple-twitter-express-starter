@@ -1,14 +1,37 @@
 const db = require('../models')
 const Tweet = db.Tweet
 const Like = db.Like
-
+const User = db.User
+const sequelize = require('sequelize')
 
 const tweetController = {
   //瀏覽所有推播
   getTweets: async (req, res) => {
     try {
       const tweets = await Tweet.findAll()
-      return res.status(202).json({ status: 'success', tweets, message: 'Successfully getting the tweets' })
+      let popularUsers = await User.findAll({
+        include: [
+          {
+            model: User, as: 'Followers',
+            attributes: [
+              'id',
+              'name',
+              'avatar',
+              'introduction'
+            ]
+          },
+        ],
+        attributes: [
+          'name',
+          'avatar',
+          'introduction',
+          [sequelize.literal('(SELECT COUNT(*) FROM Followships WHERE Followships.followingId = User.id)'), 'FollowerCount']
+        ],
+        order: [[sequelize.literal('FollowerCount'), 'DESC']],
+        limit: 10
+      })
+
+      return res.status(202).json({ status: 'success', tweets, popularUsers, message: 'Successfully getting the tweets' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
