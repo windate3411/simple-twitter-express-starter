@@ -105,6 +105,7 @@ const tweetController = {
           {
             model: User,
             attributes: [
+              'id',
               'name',
               'avatar',
               'introduction',
@@ -116,6 +117,7 @@ const tweetController = {
           },
         ],
         attributes:[
+          'id',
           'description',
           [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
           [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
@@ -125,7 +127,6 @@ const tweetController = {
       if (!tweet) {
         return res.status(400).json({ status: 'error', message: 'tweet was not found.' })
       }
-      console.log(tweet)
       return res.status(200).json({ status: 'success', tweet, message: 'tweet was not found.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
@@ -136,12 +137,13 @@ const tweetController = {
       if (!req.body.comment) {
         return res.status(400).json({ status: 'error', message: 'comment can not be empty.' })
       } else {
+        const tweet_id = req.params.tweet_id
         await Reply.create({
           comment: req.body.comment,
-          TweetId: req.body.TweetId,
+          TweetId: tweet_id,
           UserId: req.user.id
         })
-        return res.status(201).json({ status: 'success', message: 'new reply has been successfully created.' })
+        return res.status(201).json({ status: 'success', tweet_id, message: 'new reply has been successfully created.' })
       }
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
