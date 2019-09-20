@@ -249,11 +249,11 @@ module.exports = {
         ...r.dataValues,
         introduction: r.dataValues.introduction.substring(0, 50)
       }))
-      user = await {
+      user = {
         id: user.id,
         name: user.name,
         avatar: user.avatar,
-        introduction: user.introduction.substring(0, 50),
+        introduction: user.introduction,
         TweetsCount: user.dataValues.TweetsCount,
         FollowerCount: user.dataValues.FollowerCount,
         FollowingCount: user.dataValues.FollowingCount,
