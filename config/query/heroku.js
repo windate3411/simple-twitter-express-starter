@@ -12,5 +12,8 @@ module.exports = {
   },
   Reply: {
     TweetId: '(SELECT COUNT(*) FROM "Replies" WHERE "Replies"."TweetId" = "Tweet"."id")'
+  },
+  UserIntro: {
+    UserId: '(SELECT SUBSTR("introduction", 1, 50) FROM "Users" WHERE "User"."id" = "Users"."id")'
   }
 }
