@@ -1,12 +1,12 @@
 # Simple Twitter
 A simple twitter API project built with Node.js, Express, and MySQL.
 
-___
+<p>&nbsp;</p>
 
 ## API Guideline
 Please check our [API Docs](https://documenter.getpostman.com/view/7363629/SVmyRHjs) for more information
 
-___
+<p>&nbsp;</p>
 
 ## Installation
 The following instructions will get you a copy of the project and all the setting needed to run it on your local machine.
@@ -19,6 +19,7 @@ The following instructions will get you a copy of the project and all the settin
 - [MySQL v8.0.16](https://dev.mysql.com/downloads/mysql/)
 - [MySQL Workbench v8.0.16](https://dev.mysql.com/downloads/workbench/)
 
+<p>&nbsp;</p>
 
 ### Clone
 
@@ -27,6 +28,8 @@ Clone this repository to your local machine
 ```
 $ git clone https://github.com/smallpaes/simple-twitter-express-starter.git
 ```
+
+<p>&nbsp;</p>
 
 ### Setup Datebase
 
@@ -39,6 +42,8 @@ drop database if exists ac_twitter_workspace_test;
 create database ac_twitter_workspace;
 create database ac_twitter_workspace_test;
 ```
+
+<p>&nbsp;</p>
 
 ### Setup App
 
@@ -109,6 +114,7 @@ $ npm run dev
 ```
 You may visit the application on browser with the URL: http://localhost:3000
 
+<p>&nbsp;</p>
 
 ### Run Test
 
