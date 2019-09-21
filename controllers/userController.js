@@ -215,6 +215,8 @@ module.exports = {
         // 按照 following 時間排序
         order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'ASC']]
       })
+      // check if user exists
+      if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
       return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
@@ -243,6 +245,8 @@ module.exports = {
         // 按照 following 時間排序
         order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'ASC']]
       })
+      // check if user exists
+      if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
       return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
