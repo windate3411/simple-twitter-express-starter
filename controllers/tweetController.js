@@ -136,15 +136,19 @@ const tweetController = {
     try {
       if (!req.body.comment) {
         return res.status(400).json({ status: 'error', message: 'comment can not be empty.' })
-      } else {
-        const tweet_id = req.params.tweet_id
-        await Reply.create({
-          comment: req.body.comment,
-          TweetId: tweet_id,
-          UserId: req.user.id
-        })
-        return res.status(201).json({ status: 'success', tweet_id, message: 'new reply has been successfully created.' })
       }
+      const tweet_id = req.params.tweet_id
+
+      // check if the tweet exists
+      const tweet = await Tweet.findByPk(req.params.tweet_id)
+      if (!tweet) return res.status(404).json({ status: 'error', message: 'No such tweet' })
+      // create new reply to the tweet
+      await Reply.create({
+        comment: req.body.comment,
+        TweetId: tweet_id,
+        UserId: req.user.id
+      })
+      return res.status(201).json({ status: 'success', tweet_id, message: 'new reply has been successfully created.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
