@@ -3,6 +3,11 @@ A simple twitter API project built with Node.js, Express, and MySQL.
 
 ___
 
+## API Guideline
+Please check our [API Docs](https://documenter.getpostman.com/view/7363629/SVmyRHjs) for more information
+
+___
+
 ## Installation
 The following instructions will get you a copy of the project and all the setting needed to run it on your local machine.
 
