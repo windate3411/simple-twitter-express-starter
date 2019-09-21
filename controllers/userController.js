@@ -155,7 +155,21 @@ module.exports = {
   },
   getLikes: async (req, res) => {
     try {
-      let likes = await Like.findAll({
+      // get user data
+      const user = await User.findByPk(req.params.userId, {
+        attributes: [
+          'id', 'avatar', 'introduction', 'name',
+          [Sequelize.literal(customQuery.Like.UserId), 'LikesCount'],
+          [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
+        ]
+      })
+
+      if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
+
+      // get liked tweets
+      const likes = await Like.findAll({
         where: {
           UserId: req.params.userId
         },
@@ -173,7 +187,7 @@ module.exports = {
           }
         ]
       })
-      return res.json({ status: 'success', likes })
+      return res.json({ status: 'success', likes, user })
     } catch (error) {
       res.status(500).json({ status: 'error', message: error })
     }
