@@ -155,7 +155,7 @@ module.exports = {
   getLikes: async (req, res) => {
     try {
       // get user data
-      const user = await User.findByPk(req.params.userId, {
+      const user = await User.findByPk(req.params.id, {
         attributes: [
           'id', 'avatar', 'introduction', 'name',
           [Sequelize.literal(customQuery.Like.UserId), 'LikesCount'],
@@ -179,12 +179,13 @@ module.exports = {
               { model: User, attributes: ['name', 'avatar'] }
             ],
             attributes: [
-              'createdAt',
+              'createdAt', 'id', 'createdAt',
               [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
               [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
             ]
           }
-        ]
+        ],
+        attributes: []
       })
       return res.json({ status: 'success', likes, user })
     } catch (error) {
