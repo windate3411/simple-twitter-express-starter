@@ -156,6 +156,10 @@ const tweetController = {
   // like tweet
   addLike: async (req, res) => {
     try {
+      // check if tweet exists
+      const tweet = await Tweet.findByPk(req.params.tweetId)
+      if (!tweet) return res.status(404).json({ status: 'error', message: 'Cannot find the tweet' })
+
       // check if it's a duplicate like
       const likeRecord = await Like.findOne({
         where: {
