@@ -100,7 +100,7 @@ const tweetController = {
         include: [
           {
             model: Reply,
-            include:[{model: User, attributes: ['name','avatar']}]
+            include: [{ model: User, attributes: ['name', 'avatar'] }]
           },
           {
             model: User,
@@ -116,7 +116,7 @@ const tweetController = {
             ]
           },
         ],
-        attributes:[
+        attributes: [
           'id',
           'description',
           [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
