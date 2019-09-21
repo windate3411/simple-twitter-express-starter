@@ -3,9 +3,13 @@ const bodyParser = require('body-parser')
 if (process.env.NODE_ENV !== 'production') { require('dotenv').config() }
 const helpers = require('./_helpers');
 const passport = require('./config/passport')
+const cors = require('cors')
 
 const app = express()
 const port = 3000
+
+// cors 的預設為全開放
+app.use(cors())
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
