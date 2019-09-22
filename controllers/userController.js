@@ -6,7 +6,6 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const Like = db.Like
 const Tweet = db.Tweet
-const Reply = db.Reply
 const Sequelize = require('sequelize')
 const Followship = db.Followship
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
@@ -164,9 +163,23 @@ module.exports = {
   },
   getLikes: async (req, res) => {
     try {
-      let likes = await Like.findAll({
+      // get user data
+      const user = await User.findByPk(req.params.userId, {
+        attributes: [
+          'id', 'avatar', 'introduction', 'name',
+          [Sequelize.literal(customQuery.Like.UserId), 'LikesCount'],
+          [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
+        ]
+      })
+
+      if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
+
+      // get liked tweets
+      const likes = await Like.findAll({
         where: {
-          UserId: req.params.userId
+          UserId: req.params.id
         },
         include: [
           {
@@ -182,9 +195,65 @@ module.exports = {
           }
         ]
       })
-      return res.json({ status: 'success', likes })
+      return res.json({ status: 'success', likes, user })
     } catch (error) {
       res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  getFollowings: async (req, res) => {
+    try {
+      // 找 followings
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          {
+            model: User, as: 'Followings',
+            attributes: [
+              'id', 'name', 'avatar',
+              [Sequelize.literal(customQuery.UserIntro.UserId), 'introduction']
+            ],
+          }
+        ],
+        attributes: [
+          'id', 'name', 'avatar', 'introduction',
+          [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
+        ],
+        // 按照 following 時間排序
+        order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'ASC']]
+      })
+      return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
+    }
+  },
+  getFollowers: async (req, res) => {
+    try {
+      // 找 followings
+      let user = await User.findByPk(req.params.id, {
+        include: [
+          {
+            model: User, as: 'Followers',
+            attributes: [
+              'id', 'name', 'avatar',
+              [Sequelize.literal(customQuery.UserIntro.UserId), 'introduction']
+            ],
+          }
+        ],
+        attributes: [
+          'id', 'name', 'avatar', 'introduction',
+          [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
+        ],
+        // 按照 following 時間排序
+        order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'ASC']]
+      })
+      return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
+    } catch (error) {
+      return res.status(500).json({ status: 'error', message: error })
     }
   },
   getCurrentUser: (req, res) => {
