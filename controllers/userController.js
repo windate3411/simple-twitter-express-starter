@@ -68,6 +68,7 @@ module.exports = {
       const tweets = await user.getTweets({
         attributes: [
           'id',
+          'UserId',
           'createdAt',
           'description',
           [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],

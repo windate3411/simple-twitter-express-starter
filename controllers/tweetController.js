@@ -11,6 +11,13 @@ const tweetController = {
   getTweets: async (req, res) => {
     try {
       const tweets = await Tweet.findAll({
+        include: [{
+          model: User,
+          attributes: [
+            'name',
+            'id'
+          ]
+        }],
         attributes: [
           'id',
           'createdAt',
