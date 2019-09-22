@@ -11,7 +11,7 @@ const adminController = {
     try {
       let tweets = await Tweet.findAll({
         include: [
-          { model: User, attributes: ['name', 'avatar'] }
+          { model: User, attributes: ['name', 'avatar', 'id'] }
         ],
         attributes: [
           "id",
