@@ -9,25 +9,23 @@ const tweetController = {
   //瀏覽所有推播
   getTweets: async (req, res) => {
     try {
-      const tweets = await Tweet.findAll()
-      let popularUsers = await User.findAll({
-        include: [
-          {
-            model: User, as: 'Followers',
-            attributes: [
-              'id',
-              'name',
-              'avatar',
-              'introduction'
-            ]
-          },
+      const tweets = await Tweet.findAll({
+        attributes: [
+          'id',
+          'createdAt',
+          [sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
+          [sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
         ],
+        order: [['createdAt', 'DESC']]
+      })
+
+      let popularUsers = await User.findAll({
         attributes: [
           'name',
           'avatar',
           'introduction',
-          [sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount']
-
+          [sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
+          'id'
         ],
         order: [[sequelize.literal('FollowerCount'), 'DESC']],
         limit: 10
