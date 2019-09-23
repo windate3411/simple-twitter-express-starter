@@ -16,6 +16,10 @@ module.exports = {
     if (!req.body.name || !req.body.email || !req.body.password) {
       return res.json({ status: 'error', message: 'All fields are required' })
     }
+    // check if password length is between 8-12
+    if (req.body.password.length < 8 || req.body.password.length > 12) {
+      return res.json({ status: 'error', message: 'Password should be between 8-12' })
+    }
     // validate password
     if (req.body.password !== req.body.passwordCheck) {
       return res.json({ status: 'error', message: 'Two passwords do not match' })
