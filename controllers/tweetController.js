@@ -10,8 +10,37 @@ const tweetController = {
   //瀏覽所有推播
   getTweets: async (req, res) => {
     try {
-      const tweets = await Tweet.findAll()
-      return res.status(202).json({ status: 'success', tweets, message: 'Successfully getting the tweets' })
+      const tweets = await Tweet.findAll({
+        include: [{
+          model: User,
+          attributes: [
+            'name',
+            'id'
+          ]
+        }],
+        attributes: [
+          'id',
+          'createdAt',
+          'description',
+          [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
+          [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
+        ],
+        order: [['createdAt', 'DESC']]
+      })
+
+      let popularUsers = await User.findAll({
+        attributes: [
+          'name',
+          'avatar',
+          'introduction',
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
+          'id'
+        ],
+        order: [[Sequelize.literal('FollowerCount'), 'DESC']],
+        limit: 10
+      })
+
+      return res.status(202).json({ status: 'success', tweets, popularUsers, message: 'Successfully getting the tweets' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }

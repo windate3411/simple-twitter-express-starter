@@ -68,8 +68,18 @@ module.exports = {
   },
   getUserTweets: async (req, res) => {
     try {
-      const user = await User.findByPk(req.params.id, { include: [Tweet] })
-      const tweets = user.Tweets
+      const user = await User.findByPk(req.params.id)
+      const tweets = await user.getTweets({
+        attributes: [
+          'id',
+          'UserId',
+          'createdAt',
+          'description',
+          [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
+          [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
+        ],
+        order: [['createdAt', 'DESC']]
+      })
       //get counts for user_profile
       const tweetsCount = await user.countTweets()
       const followersCount = await user.countFollowers()
