@@ -1,7 +1,7 @@
 const db = require('../models')
 const Tweet = db.Tweet
 const User = db.User
-const Like = db.Like
+const Reply = db.Reply
 const Sequelize = require('sequelize')
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
@@ -11,7 +11,8 @@ const adminController = {
     try {
       let tweets = await Tweet.findAll({
         include: [
-          { model: User, attributes: ['name', 'avatar', 'id'] }
+          { model: User, attributes: ['name', 'avatar', 'id'] },
+          Reply
         ],
         attributes: [
           "id",

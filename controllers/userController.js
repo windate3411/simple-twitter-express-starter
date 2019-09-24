@@ -76,8 +76,12 @@ module.exports = {
     })
   },
   getUserTweets: async (req, res) => {
+    //get curentUser data
+    const currentUser = req.user
     try {
-      const user = await User.findByPk(req.params.id)
+      const user = await User.findByPk(req.params.id, {
+        attributes: ['id', 'name', 'avatar', 'introduction']
+      })
       const tweets = await user.getTweets({
         attributes: [
           'id',
@@ -95,10 +99,16 @@ module.exports = {
       const followingsCount = await user.countFollowings()
       const likesCount = await user.countLikes()
 
+      //add isFollowing to user data
+      const userData = {
+        ...user.dataValues,
+        isFollowing: currentUser.Followings.map(following => following.id).includes(user.id)
+      }
+
       if (!user) {
         return res.status(400).json({ status: 'error', message: 'cant find the user' })
       }
-      return res.status(200).json({ status: 'success', user, tweets, tweetsCount, followersCount, followingsCount, likesCount, message: 'Successfully get user profile' })
+      return res.status(200).json({ status: 'success', userData, tweets, tweetsCount, followersCount, followingsCount, likesCount, message: 'Successfully get user profile' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
@@ -236,7 +246,7 @@ module.exports = {
           [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
         ],
         // 按照 following 時間排序
-        order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'ASC']]
+        order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'DESC']]
       })
       // check if user exists
       if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
@@ -266,7 +276,7 @@ module.exports = {
           [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
         ],
         // 按照 following 時間排序
-        order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'ASC']]
+        order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'DESC']]
       })
       // check if user exists
       if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
