@@ -7,6 +7,7 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const Like = db.Like
 const Tweet = db.Tweet
 const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 const Followship = db.Followship
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
@@ -26,10 +27,18 @@ module.exports = {
     }
 
     try {
-      // check if it's a unique user
-      const user = await User.findOne({ where: { email: req.body.email } })
+      // check if it's a unique user name and email
+      const user = await User.findOne({
+        where: {
+          [Op.or]: [
+            { email: req.body.email },
+            { name: req.body.name }
+          ]
+        }
+      })
+
       if (user) {
-        return res.json({ status: 'error', message: 'Existing email account' })
+        return res.json({ status: 'error', message: 'Existing email or user name' })
       }
 
       // create user
