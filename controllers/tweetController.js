@@ -33,7 +33,7 @@ const tweetController = {
       })
 
       let popularUsers = await User.findAll({
-        include: [{ model: User, as: 'Followers' }],
+        // include: [{ model: User, as: 'Followers' }],
         attributes: [
           'name',
           'avatar',
@@ -46,7 +46,7 @@ const tweetController = {
       })
       const popularUsersData = popularUsers.map(user => ({
         ...user.dataValues,
-        isFollowing: user.Followers.map(follower => follower.id).includes(currentUser.dataValues.id)
+        isFollowing: currentUser.Followings.map(following => following.id).includes(user.id)
       }))
 
       return res.status(202).json({ status: 'success', tweets, popularUsersData, message: 'Successfully getting the tweets' })
