@@ -70,7 +70,7 @@ module.exports = {
     const payload = { id: user.id }
     const token = jwt.sign(payload, process.env.JWT_SECRET)
     return res.json({
-      status: 'success', message: 'Successfully sign up', token, user: {
+      status: 'success', message: 'Successfully log in', token, user: {
         id: user.id, name: user.name, email: user.email, role: user.role, avatar: user.avatar
       }
     })
