@@ -156,7 +156,7 @@ const tweetController = {
       if (!tweet) {
         return res.status(400).json({ status: 'error', message: 'tweet was not found.' })
       }
-      return res.status(200).json({ status: 'success', tweet, message: 'tweet was not found.' })
+      return res.status(200).json({ status: 'success', tweet, message: 'successfully get tweet and replies.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }

@@ -236,7 +236,7 @@ module.exports = {
           [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
         ],
         // 按照 following 時間排序
-        order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'ASC']]
+        order: [[{ model: User, as: 'Followings' }, Followship, 'createdAt', 'DESC']]
       })
       // check if user exists
       if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
@@ -266,7 +266,7 @@ module.exports = {
           [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
         ],
         // 按照 following 時間排序
-        order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'ASC']]
+        order: [[{ model: User, as: 'Followers' }, Followship, 'createdAt', 'DESC']]
       })
       // check if user exists
       if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })

@@ -12,8 +12,8 @@ router.get('/:id/tweets', ensureAuthenticated, getUser, userController.getUserTw
 router.get('/:id/edit', ensureAuthenticated, getUser, userController.getEditUserPage)
 router.post('/:id/edit', ensureAuthenticated, getUser, upload.single('avatar'), userController.editUser)
 router.get('/:id/likes', ensureAuthenticated, getUser, userController.getLikes)
-router.get('/:id/followings', userController.getFollowings)
-router.get('/:id/followers', userController.getFollowers)
+router.get('/:id/followings', ensureAuthenticated, getUser, userController.getFollowings)
+router.get('/:id/followers', ensureAuthenticated, getUser, userController.getFollowers)
 router.get('/current_user', ensureAuthenticated, getUser, userController.getCurrentUser)
 
 module.exports = router
