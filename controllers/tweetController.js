@@ -3,12 +3,14 @@ const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const Tweet = db.Tweet
+const FollowShip = db.FollowShip
 const Sequelize = require('sequelize')
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
 const tweetController = {
   //瀏覽所有推播
   getTweets: async (req, res) => {
+    const currentUser = req.user
     try {
       const tweets = await Tweet.findAll({
         include: [{
@@ -39,8 +41,12 @@ const tweetController = {
         order: [[Sequelize.literal('FollowerCount'), 'DESC']],
         limit: 10
       })
+      const popularUsersData = popularUsers.map(user => ({
+        ...user.dataValues,
+        isFollowing: currentUser.Followings.map(following => following.id).includes(user.id)
+      }))
 
-      return res.status(202).json({ status: 'success', tweets, popularUsers, message: 'Successfully getting the tweets' })
+      return res.status(202).json({ status: 'success', tweets, popularUsersData, message: 'Successfully getting the tweets' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
