@@ -67,7 +67,7 @@ const adminController = {
           [Sequelize.literal(customQuery.Tweet.UserId), 'tweetCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerCount'],
-          [Sequelize.literal('(SELECT SUM((SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweets.id)) FROM Tweets WHERE Tweets.UserId = User.id )'), 'totalLikes']
+          [Sequelize.literal(customQuery.Like.TweetIdUserId), 'totalLikes']
         ],
         order: Sequelize.literal('tweetCount DESC')
       })

@@ -4,7 +4,8 @@ module.exports = {
   },
   Like: {
     UserId: '(SELECT COUNT(*) FROM Likes WHERE Likes.UserId = User.id)',
-    TweetId: '(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)'
+    TweetId: '(SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweet.id)',
+    TweetIdUserId: '(SELECT COALESCE(SUM((SELECT COUNT(*) FROM Likes WHERE Likes.TweetId = Tweets.id)),0) FROM Tweets WHERE Tweets.UserId = User.id )'
   },
   FollowShip: {
     FollowerId: '(SELECT COUNT(*) FROM Followships WHERE Followships.followerId = User.id)',
