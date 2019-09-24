@@ -208,7 +208,7 @@ module.exports = {
             ]
           }
         ],
-        attributes: []
+        order: [['createdAt', 'DESC']]
       })
       return res.json({ status: 'success', likes, user })
     } catch (error) {
