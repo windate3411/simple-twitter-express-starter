@@ -155,6 +155,18 @@ module.exports = {
         return res.status(400).json({ status: 'error', message: 'you must enter your name' })
       }
 
+      //check for unique user
+      try {
+        const user_check = await User.findOne({
+          where: [{ name: req.body.name }]
+        })
+        if (user_check) {
+          return res.json({ status: 'error', message: 'Existing user name' })
+        }
+      } catch (error) {
+        return res.status(500).json({ status: 'error', message: error })
+      }
+
       try {
         const { file } = req
         //if a file is uploaded
