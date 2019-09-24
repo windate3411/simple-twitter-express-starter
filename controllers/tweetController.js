@@ -11,8 +11,6 @@ const tweetController = {
   //瀏覽所有推播
   getTweets: async (req, res) => {
     const currentUser = req.user
-    // console.log(currentUser.dataValues.id);
-    // console.log(currentUser);
     try {
       const tweets = await Tweet.findAll({
         include: [{
@@ -33,7 +31,6 @@ const tweetController = {
       })
 
       let popularUsers = await User.findAll({
-        // include: [{ model: User, as: 'Followers' }],
         attributes: [
           'name',
           'avatar',
