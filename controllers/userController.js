@@ -262,7 +262,15 @@ module.exports = {
       })
       // check if user exists
       if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
-      return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
+      // retrieve user profile data
+      const { Followings, ...userData } = user.dataValues
+      // check if user has been followed
+      const followshipData = user.Followings.map(followship => ({
+        ...followship.dataValues,
+        isFollowed: req.user.Followings.map(data => data.id).includes(followship.id)
+      }))
+
+      return res.status(200).json({ status: 'success', userData, followshipData, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
@@ -292,7 +300,14 @@ module.exports = {
       })
       // check if user exists
       if (!user) return res.status(404).json({ status: 'error', message: 'No such user' })
-      return res.status(200).json({ status: 'success', user, message: 'successfully get the information.' })
+      // retrieve user profile data
+      const { Followers, ...userData } = user.dataValues
+      // check if user has been followed
+      const followshipData = user.Followers.map(followship => ({
+        ...followship.dataValues,
+        isFollowed: req.user.Followings.map(data => data.id).includes(followship.id)
+      }))
+      return res.status(200).json({ status: 'success', userData, followshipData, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
