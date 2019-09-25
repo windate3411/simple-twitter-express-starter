@@ -10,6 +10,7 @@ module.exports = {
       password: bcrypt.hashSync('12345678', 10),
       avatar: faker.image.avatar(),
       role: 'Admin',
+      introduction: faker.lorem.sentence(),
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -19,6 +20,7 @@ module.exports = {
       password: bcrypt.hashSync('12345678', 10),
       avatar: faker.image.avatar(),
       role: 'User',
+      introduction: faker.lorem.sentence(),
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -28,6 +30,7 @@ module.exports = {
       password: bcrypt.hashSync('12345678', 10),
       avatar: faker.image.avatar(),
       role: 'User',
+      introduction: faker.lorem.sentence(),
       createdAt: new Date(),
       updatedAt: new Date()
     }], {})
