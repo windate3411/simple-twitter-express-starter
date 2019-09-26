@@ -33,9 +33,9 @@ const adminController = {
         }))
         return res.status(200).json({ status: 'success', tweets })
       }
-      return res.status(401).json({ stauts: 'error', message: 'you are not a admin.' })
+      return res.status(401).json({ status: 'error', message: 'you are not an admin.' })
     } catch (error) {
-      return res.status(500).json({ stauts: 'error', message: error })
+      return res.status(500).json({ status: 'error', message: error })
     }
   },
   // 刪除其他使用者的推文
