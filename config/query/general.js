@@ -9,7 +9,7 @@ module.exports = {
   },
   FollowShip: {
     FollowerId: '(SELECT COUNT(*) FROM Followships WHERE Followships.followerId = User.id)',
-    FollowingId: '(SELECT COALESCE(COUNT(*),0) FROM Followships WHERE Followships.followingId = User.id)'
+    FollowingId: '(SELECT COUNT(*) FROM Followships WHERE Followships.followingId = User.id)'
   },
   Reply: {
     TweetId: '(SELECT COUNT(*) FROM Replies WHERE Replies.TweetId = Tweet.id)'
