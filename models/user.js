@@ -9,9 +9,9 @@ module.exports = (sequelize, DataTypes) => {
     role: DataTypes.STRING
   }, {});
   User.associate = function (models) {
-    User.hasMany(models.Tweet)
-    User.hasMany(models.Like)
-    User.hasMany(models.Reply)
+    User.hasMany(models.Tweet, { onDelete: 'cascade', hooks: true })
+    User.hasMany(models.Like, { onDelete: 'cascade', hooks: true })
+    User.hasMany(models.Reply, { onDelete: 'cascade', hooks: true })
     User.belongsToMany(User, {
       through: models.Followship,
       foreignKey: 'followingId',

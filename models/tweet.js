@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Tweet.associate = function (models) {
     Tweet.belongsTo(models.User)
-    Tweet.hasMany(models.Like)
-    Tweet.hasMany(models.Reply)
+    Tweet.hasMany(models.Like, { onDelete: 'cascade', hooks: true })
+    Tweet.hasMany(models.Reply, { onDelete: 'cascade', hooks: true })
   };
   return Tweet;
 };
