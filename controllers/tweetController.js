@@ -134,36 +134,33 @@ const tweetController = {
         include: [
           {
             model: Reply,
-            include: [{ model: User, attributes: ['name', 'avatar'] }]
-          },
-          {
-            model: User,
-            attributes: [
-              'id',
-              'name',
-              'avatar',
-              'introduction',
-              [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
-              [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
-              [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
-              [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
-            ]
-          },
+            include: [{ model: User , attributes: ['name', 'avatar'] }]
+          }
         ],
         attributes: [
           'id',
+          'UserId',
           'description',
           [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
           [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
+        ]
+      })
+      const userData = await User.findByPk(tweet.dataValues.UserId, {
+        attributes: [
+          'id', 'avatar', 'introduction', 'name',
+          [Sequelize.literal(customQuery.Like.UserId), 'LikesCount'],
+          [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
         ]
       })
       // 如果 tweet 不存在
       if (!tweet) {
         return res.status(400).json({ status: 'error', message: 'tweet was not found.' })
       }
-      const isFollowing = req.user.Followings.map(following => following.id).includes(tweet.User.id)
-      tweet.dataValues.User.dataValues.isFollowing = isFollowing
-      return res.status(200).json({ status: 'success', tweet, message: 'successfully get tweet and replies.' })
+      const isFollowing = req.user.Followings.map(following => following.id).includes(userData.id)
+      userData.dataValues.isFollowing = isFollowing
+      return res.status(200).json({ status: 'success', tweet, userData, message: 'successfully get tweet and replies.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }
