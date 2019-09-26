@@ -43,15 +43,15 @@ const adminController = {
     try {
       let tweet = await Tweet.findByPk(req.params.id)
       if (!tweet) {
-        return res.status(400).json({ stauts: 'error', message: 'tweet was not found.' })
+        return res.status(400).json({ status: 'error', message: 'tweet was not found.' })
       }
       if (req.user.role !== 'Admin') {
-        return res.status(401).json({ stauts: 'error', message: 'you are not authorized to do this action.' })
+        return res.status(401).json({ status: 'error', message: 'you are not authorized to do this action.' })
       }
       await tweet.destroy()
       return res.status(202).json({ status: 'success', message: 'tweet was successfully destroyed.' })
     } catch (error) {
-      return res.status(500).json({ stauts: 'error', message: error })
+      return res.status(500).json({ status: 'error', message: error })
     }
   },
   // 看見站內所有的使用者
@@ -59,7 +59,7 @@ const adminController = {
     try {
       // 確認是否是 admin
       if (req.user.role !== 'Admin') {
-        return res.status(401).json({ stauts: 'error', message: 'you are not a admin.' })
+        return res.status(401).json({ status: 'error', message: 'you are not a admin.' })
       }
       // get user data
       let users = await User.findAll({
@@ -75,7 +75,7 @@ const adminController = {
       return res.status(200).json({ status: 'success', users })
     } catch (error) {
       console.log(error)
-      return res.status(500).json({ stauts: 'error', message: error })
+      return res.status(500).json({ status: 'error', message: error })
     }
   }
 }
