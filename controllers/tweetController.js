@@ -35,7 +35,6 @@ const tweetController = {
           'name',
           'avatar',
           'introduction',
-          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
           'id'
         ],
         order: [[Sequelize.literal('FollowerCount'), 'DESC']],
