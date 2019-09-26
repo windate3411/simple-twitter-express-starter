@@ -29,7 +29,11 @@ const adminController = {
         // 取 tweet 前 50 字
         tweets = await tweets.map(tweet => ({
           ...tweet.dataValues,
-          description: tweet.dataValues.description.substring(0, 50)
+          description: tweet.dataValues.description.substring(0, 50),
+          Replies: tweet.dataValues.Replies.map(reply => ({
+            ...reply.dataValues,
+            comment: reply.dataValues.comment.substring(0, 50)
+          }))
         }))
         return res.status(200).json({ status: 'success', tweets })
       }
