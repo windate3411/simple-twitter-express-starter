@@ -3,7 +3,6 @@ const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const Tweet = db.Tweet
-const FollowShip = db.FollowShip
 const Sequelize = require('sequelize')
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
@@ -162,6 +161,8 @@ const tweetController = {
       if (!tweet) {
         return res.status(400).json({ status: 'error', message: 'tweet was not found.' })
       }
+      const isFollowing = req.user.Followings.map(following => following.id).includes(tweet.User.id)
+      tweet.dataValues.User.dataValues.isFollowing = isFollowing
       return res.status(200).json({ status: 'success', tweet, message: 'successfully get tweet and replies.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
