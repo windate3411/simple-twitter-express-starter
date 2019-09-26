@@ -68,7 +68,7 @@ const adminController = {
       // get user data
       let users = await User.findAll({
         attributes: [
-          'name', 'id', 'avatar', 'role',
+          'name', 'id', 'avatar', 'role', 'introduction',
           [Sequelize.literal(customQuery.Tweet.UserId), 'tweetCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
           [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerCount'],
