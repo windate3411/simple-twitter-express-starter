@@ -3,7 +3,6 @@ const User = db.User
 const Reply = db.Reply
 const Like = db.Like
 const Tweet = db.Tweet
-const FollowShip = db.FollowShip
 const Sequelize = require('sequelize')
 const customQuery = process.env.heroku ? require('../config/query/heroku') : require('../config/query/general')
 
@@ -135,7 +134,7 @@ const tweetController = {
         include: [
           {
             model: Reply,
-            include: [{ model: User, attributes: ['name', 'avatar'] }]
+            include: [{ model: User , attributes: ['name', 'avatar'] }]
           },
           {
             model: User,
@@ -145,14 +144,15 @@ const tweetController = {
               'avatar',
               'introduction',
               [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
-              [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
-              [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+              [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
+              [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
               [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
             ]
-          },
+          }
         ],
         attributes: [
           'id',
+          'UserId',
           'description',
           [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
           [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
@@ -162,7 +162,10 @@ const tweetController = {
       if (!tweet) {
         return res.status(400).json({ status: 'error', message: 'tweet was not found.' })
       }
-      return res.status(200).json({ status: 'success', tweet, message: 'successfully get tweet and replies.' })
+      const { User: userData, ...tweetData } = tweet.dataValues
+      const isFollowing = req.user.Followings.map(following => following.id).includes(userData.id)
+      userData.dataValues.isFollowing = isFollowing
+      return res.status(200).json({ status: 'success', tweetData, userData, message: 'successfully get tweet and replies.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
     }

@@ -232,6 +232,8 @@ module.exports = {
         ],
         order: [['createdAt', 'DESC']]
       })
+      const isFollowing = req.user.Followings.map(following => following.id).includes(user.id)
+      user.dataValues.isFollowing = isFollowing
       return res.json({ status: 'success', likes, user })
     } catch (error) {
       res.status(500).json({ status: 'error', message: error })
@@ -253,8 +255,8 @@ module.exports = {
         attributes: [
           'id', 'name', 'avatar', 'introduction',
           [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
-          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
-          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
           [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
         ],
         // 按照 following 時間排序
@@ -269,7 +271,8 @@ module.exports = {
         ...followship.dataValues,
         isFollowed: req.user.Followings.map(data => data.id).includes(followship.id)
       }))
-
+      const isFollowing = req.user.Followings.map(following => following.id).includes(user.id)
+      userData.isFollowing = isFollowing
       return res.status(200).json({ status: 'success', userData, followshipData, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
@@ -291,8 +294,8 @@ module.exports = {
         attributes: [
           'id', 'name', 'avatar', 'introduction',
           [Sequelize.literal(customQuery.Tweet.UserId), 'TweetsCount'],
-          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowerCount'],
-          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowerId), 'FollowingCount'],
+          [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
           [Sequelize.literal(customQuery.Like.UserId), 'LikeCount']
         ],
         // 按照 following 時間排序
@@ -307,6 +310,8 @@ module.exports = {
         ...followship.dataValues,
         isFollowed: req.user.Followings.map(data => data.id).includes(followship.id)
       }))
+      const isFollowing = req.user.Followings.map(following => following.id).includes(user.id)
+      userData.isFollowing = isFollowing
       return res.status(200).json({ status: 'success', userData, followshipData, message: 'successfully get the information.' })
     } catch (error) {
       return res.status(500).json({ status: 'error', message: error })
