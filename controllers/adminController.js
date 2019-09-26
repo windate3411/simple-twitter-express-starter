@@ -22,7 +22,7 @@ const adminController = {
           [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
           [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
         ],
-        order: Sequelize.literal('createdAt ASC')
+        order: Sequelize.literal('"createdAt" ASC')
       })
       // 確認是否是 admin
       if (req.user.role === 'Admin') {
@@ -37,9 +37,9 @@ const adminController = {
         }))
         return res.status(200).json({ status: 'success', tweets })
       }
-      return res.status(401).json({ stauts: 'error', message: 'you are not a admin.' })
+      return res.status(401).json({ status: 'error', message: 'you are not an admin.' })
     } catch (error) {
-      return res.status(500).json({ stauts: 'error', message: error })
+      return res.status(500).json({ status: 'error', message: error })
     }
   },
   // 刪除其他使用者的推文
@@ -74,7 +74,7 @@ const adminController = {
           [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerCount'],
           [Sequelize.literal(customQuery.Like.TweetIdUserId), 'totalLikes']
         ],
-        order: Sequelize.literal('tweetCount DESC')
+        order: Sequelize.literal('"tweetCount" DESC')
       })
       return res.status(200).json({ status: 'success', users })
     } catch (error) {
