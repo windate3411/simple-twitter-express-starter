@@ -38,7 +38,7 @@ const tweetController = {
           [Sequelize.literal(customQuery.FollowShip.FollowingId), 'FollowerCount'],
           'id'
         ],
-        order: Sequelize.literal('FollowerCount DESC'),
+        order: [[Sequelize.literal(customQuery.FollowShip.FollowingId), 'DESC']],
         limit: 10
       })
       const popularUsersData = popularUsers.map(user => ({
