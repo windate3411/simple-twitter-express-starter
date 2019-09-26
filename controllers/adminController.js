@@ -22,7 +22,7 @@ const adminController = {
           [Sequelize.literal(customQuery.Like.TweetId), 'LikesCount'],
           [Sequelize.literal(customQuery.Reply.TweetId), 'RepliesCount']
         ],
-        order: [[Sequelize.literal('createdAt'), 'ASC']]
+        order: Sequelize.literal('"createdAt" ASC')
       })
       // 確認是否是 admin
       if (req.user.role === 'Admin') {
