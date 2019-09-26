@@ -70,7 +70,7 @@ const adminController = {
           [Sequelize.literal(customQuery.FollowShip.FollowingId), 'followerCount'],
           [Sequelize.literal(customQuery.Like.TweetIdUserId), 'totalLikes']
         ],
-        order: Sequelize.literal('tweetCount DESC')
+        order: Sequelize.literal('"tweetCount" DESC')
       })
       return res.status(200).json({ status: 'success', users })
     } catch (error) {
