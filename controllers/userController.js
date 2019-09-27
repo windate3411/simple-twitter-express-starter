@@ -160,7 +160,8 @@ module.exports = {
         const user_check = await User.findOne({
           where: [{ name: req.body.name }]
         })
-        if (user_check) {
+        //if name is already in database & not the current user name
+        if (user_check && user.name !== req.body.name) {
           return res.json({ status: 'error', message: 'Existing user name' })
         }
       } catch (error) {

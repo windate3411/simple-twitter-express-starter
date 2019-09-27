@@ -16,7 +16,8 @@ const tweetController = {
           model: User,
           attributes: [
             'name',
-            'id'
+            'id',
+            'avatar'
           ]
         }],
         attributes: [
@@ -134,7 +135,7 @@ const tweetController = {
         include: [
           {
             model: Reply,
-            include: [{ model: User , attributes: ['name', 'avatar'] }]
+            include: [{ model: User, attributes: ['name', 'avatar'] }]
           },
           {
             model: User,
