@@ -17,7 +17,7 @@ const tweetController = {
           attributes: [
             'name',
             'id',
-            'avatar'
+            'avatar',
           ]
         }],
         attributes: [
